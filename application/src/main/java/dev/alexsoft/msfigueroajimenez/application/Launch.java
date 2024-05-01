@@ -1,13 +1,13 @@
-package dev.alexsoft.msfigueroajimenez;
+package dev.alexsoft.msfigueroajimenez.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MsFigueroaJimenezApplication {
+public class Launch {
 
     public static void main(String[] args) {
-        SpringApplication.run(MsFigueroaJimenezApplication.class, args);
+        SpringApplication.run(Launch.class, args);
     }
 
 }
