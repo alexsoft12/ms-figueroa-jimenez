@@ -83,7 +83,7 @@ public class EmpresaAdapter implements EmpresaServiceOut {
             EmpresaEntity empresaEntity = empresaRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
             EmpresaDto empresaDto = EmpresaMapper.fromEntityToDto(empresaEntity);
             String dataParaRedis = Util.convertirAString(empresaDto);
-            redisService.saveInRedis(Constant.REDIS_KEY_OBTENER_EMPRESA + id, dataParaRedis, 2);
+            redisService.saveInRedis(Constant.REDIS_KEY_OBTENER_EMPRESA + id, dataParaRedis, Constant.REDIS_EXPIRATION);
             return Optional.of(empresaDto);
     }
 
@@ -108,8 +108,12 @@ public class EmpresaAdapter implements EmpresaServiceOut {
     public void delete(Long id) {
         EmpresaEntity empresa = empresaRepository.findById(id).orElseThrow(()-> new RuntimeException("Empresa no encontrada"));
         empresa.setEstado(Constant.STATUS_INACTIVE);
-        empresa.setUsuaModif(Constant.USU_ADMIN);
-        empresa.setDateModif(getTimestamp());
+        empresa.setUsuaDelet(Constant.USU_ADMIN);
+        empresa.setDateDelet(getTimestamp());
+        String redisInfo = redisService.getFromRedis(Constant.REDIS_KEY_OBTENER_EMPRESA + id);
+        if(redisInfo != null) {
+            redisService.deleteKey(Constant.REDIS_KEY_OBTENER_EMPRESA + id);
+        }
         empresaRepository.save(empresa);
     }
 }
